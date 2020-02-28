@@ -10,3 +10,4 @@ numTypes = 3
 #4 attributes
 #first 50 are setosa, second 50 are versicolour, last 50 are virginica
 NN = network.NeuralNetwork(len(irisdat[0]), 2, numTypes)
+
