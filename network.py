@@ -15,12 +15,12 @@ class NeuralNetwork():
         pass
     
     def train(self, data, iters):
-        self.ILweights = [[random.randint(-1000, 1000) for k in range(5)] for q in range(4)]
+        self.ILweights = [[random.randint(-1000, 1000) for k in range(5)] for q in range(5)]
         #5 branches from each node
-        #4 input nodes
-        #5 nodes in the hidden layer
+        #4 input nodes + 1 bias node
+        #5 nodes in the hidden layer + 1 bias
         #3 nodes in output layer, 3 choices
-        self.HLweights = [[random.randint(-1000, 1000) for k in range(3)] for q in range(5)]
+        self.HLweights = [[random.randint(-1000, 1000) for k in range(3)] for q in range(6)]
         #range(3) because 3 branches off
         #q in range(5) because 5 nodes
         weightedVals1 = []
@@ -39,13 +39,17 @@ class NeuralNetwork():
                 #y is the expected output/index of solution. 
                 #the output of nn will be a len3 array and the inds are 0, 1, 2
                 #y is the expected index of solution
-                temp = []
+                almost = []
                 for f in range(len(LInput)):
+                    print(self.ILweights, LInput)
                     tem = self.ILweights[f]
-                    temp.append(sigmoid(sum([tem[i]*LInput[i] for i in range(len(LInput))])))
-                    print(temp)
-                    
-                weightedVals1.append(temp)
+                    almost.append(sigmoid(sum([tem[i]*LInput[f] for i in range(len(tem))])))
+
+                weightedVals1.append(almost)
+                
+                #we now have the nodes of the first hidden layer
+                #now to find what value they output when multiplied by the new weights
+                #3 connections per node, including the bias
 
                 for t in weightedVals1:
                         node = bias(t)                        
@@ -53,7 +57,7 @@ class NeuralNetwork():
                         print(node)
                         temp2 = []
                         for f in range(len(node)):
-                            temp.append(sigmoid(sum(np.dot(LInput, self.HLweights))))
+                            temp2.append(sigmoid(sum(np.dot(LInput, self.HLweights))))
                         weightedVals2.append(temp2)
 
                 print("---------------------------------")
