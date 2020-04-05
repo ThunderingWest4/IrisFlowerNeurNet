@@ -4,12 +4,12 @@ import numpy as np
 
 class NeuralNetwork():
 
-    def NeuralNetwork(self, inputN, hiddenL, outputN):
+    def NeuralNetwork(self, inputN, hiddenL, hiddenS, outputN):
         #constructor
         self.input = inputN
         self.hidden = hiddenL
-        self.output = outputN
-        self.totalL = self.input + self.hidden + self.output
+        self.hiddenSize = hiddenS
+        self.outputSize = outputN
 
     def fProp(self):
         pass
@@ -71,21 +71,21 @@ class NeuralNetwork():
         #we almost have the fprop part down, next we need to work on backprop
         
     def feedForward(self, inp):
-        ret = []
-        temp = []
+        ret = [0 for i in range(self.outputSize)]
+        temp = [0 for i in range(self.hiddenSize)]
         #print(inp, self.ILweights, self.HLweights)
-        for x in inp:
-            t1 = []
-            for chain in self.ILweights:
-                #print(x, chain)
-                t1.append(sigmoid(sum([j*x for j in chain])))
-            temp.append(t1)
-        for i in temp:
-            t2 = []
-            for chain in self.ILweights:
-                #print(x, chain)
-                t2.append(sigmoid(sum([j*x for j in chain])))
-            ret.append(t2)
+
+        for x in range(len(inp)):
+            for i in range(self.hiddenSize):
+                temp[i] += self.ILweights[x][i]*inp[x]
+        for inty in range(len(temp)):
+            temp[inty] = sigmoid(temp[inty])
+
+        for i in range(len(temp)):
+            for i in range(self.outputSize):
+                ret[i] += self.HLweights[x][i]*temp[x]
+        for minty in range(len(ret)):
+            ret[minty] = sigmoid(ret[minty])
         return ret
 
     def test(self, testdata):
@@ -102,12 +102,15 @@ class NeuralNetwork():
             else:
                 result = "wrong"
             tests+=1
-            print("Test Number " + tests + ": The Network Was " + result)
-        print("The Network was " + (correct/total)*100 + "% Correct")
+            print("Test Number " + str(tests) + ": The Network was " + str(result))
+        print("The Network was " + str((correct/total)*100) + "% Correct")
         
 
     def bProp(self):
         pass
+
+    def genLoss(y, y2, x, sig):
+        return 2*(y-y2)*sig_deriv(sig)*x
 
 def sigmoid(x):
     return (1 / (1 + np.exp(-x)))

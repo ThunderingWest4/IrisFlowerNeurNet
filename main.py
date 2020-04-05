@@ -11,7 +11,7 @@ numTypes = 3
 #4 attributes
 #first 50 are setosa, second 50 are versicolour, last 50 are virginica
 NN = network.NeuralNetwork()
-NN.NeuralNetwork(len(irisdat[0]), 2, numTypes)
+NN.NeuralNetwork(len(irisdat[0]), 1, 5, numTypes)
 val = []
 
 for i in range(len(irisdat)):
@@ -21,11 +21,11 @@ for i in range(len(irisdat)):
     for el in x:
         u.append(el)
     if(i<=50): 
-        val.append([u, 1])
+        val.append([u, 0])
     elif(50 < i and i <= 100):
-        val.append([u, 2])
+        val.append([u, 1])
     elif(100 < i and i <= 150):
-        val.append([u, 3])
+        val.append([u, 2])
 
 random.shuffle(val)
 
