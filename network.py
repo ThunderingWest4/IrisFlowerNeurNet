@@ -89,7 +89,22 @@ class NeuralNetwork():
         return ret
 
     def test(self, testdata):
-        pass
+        print("-----------------------------------------------------------------")
+        tests = 0
+        correct = 0
+        total = len(testdata)
+        for x in testdata:
+            result = ""
+            ans = self.feedForward(x[0])
+            if(maxIndex(ans) == x[1]):
+                result = "correct"
+                correct+=1
+            else:
+                result = "wrong"
+            tests+=1
+            print("Test Number " + tests + ": The Network Was " + result)
+        print("The Network was " + (correct/total)*100 + "% Correct")
+        
 
     def bProp(self):
         pass
