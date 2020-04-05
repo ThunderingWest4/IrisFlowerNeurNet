@@ -113,8 +113,5 @@ def bias(arr):
         temp.append(el)
     return temp
 
-def sig_deriv():
-    
-
-
-    return 4
+def sig_deriv(x):
+    return sigmoid(x)*(1-sigmoid(x))
