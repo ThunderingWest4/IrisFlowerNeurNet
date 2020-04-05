@@ -23,8 +23,8 @@ class NeuralNetwork():
         self.HLweights = [[random.randint(-1000, 1000) for k in range(3)] for q in range(6)]
         #range(3) because 3 branches off
         #q in range(5) because 5 nodes
-        weightedVals1 = []
-        weightedVals2 = []
+        #weightedVals1 = []
+        #weightedVals2 = []
         """for i in range(iters):
             for a in data:
                 LInput = a[0]
@@ -33,7 +33,7 @@ class NeuralNetwork():
                     weightedVals.append([LInput[f]*self.ILweights[f][w] for w in range(len(self.ILweights))])
         """
         for a in data:
-                LInput = a[0]
+                """LInput = a[0]
                 #already has a bias
                 y = a[1]
                 #y is the expected output/index of solution. 
@@ -41,7 +41,7 @@ class NeuralNetwork():
                 #y is the expected index of solution
                 almost = []
                 for f in range(len(LInput)):
-                    print(self.ILweights, LInput)
+                    "print(self.ILweights, LInput)"
                     tem = self.ILweights[f]
                     almost.append(sigmoid(sum([tem[i]*LInput[f] for i in range(len(tem))])))
 
@@ -54,7 +54,7 @@ class NeuralNetwork():
                 for t in weightedVals1:
                         node = bias(t)                        
                         #add bias
-                        print(node)
+                        print(node, LInput)
                         temp2 = []
                         for f in range(len(node)):
                             temp2.append(sigmoid(sum(np.dot(LInput, self.HLweights))))
@@ -62,10 +62,31 @@ class NeuralNetwork():
 
                 print("---------------------------------")
                 print(weightedVals1)
-                print(weightedVals2)
+                print(weightedVals2)"""
+                output = self.feedForward(a[0])
+                ans = a[1]
+                print(output)
+                
         
         #we almost have the fprop part down, next we need to work on backprop
         
+    def feedForward(self, inp):
+        ret = []
+        temp = []
+        #print(inp, self.ILweights, self.HLweights)
+        for x in inp:
+            t1 = []
+            for chain in self.ILweights:
+                #print(x, chain)
+                t1.append(sigmoid(sum([j*x for j in chain])))
+            temp.append(t1)
+        for i in temp:
+            t2 = []
+            for chain in self.ILweights:
+                #print(x, chain)
+                t2.append(sigmoid(sum([j*x for j in chain])))
+            ret.append(t2)
+        return ret
 
     def test(self, testdata):
         pass
@@ -74,7 +95,8 @@ class NeuralNetwork():
         pass
 
 def sigmoid(x):
-    return (1 / (1 + (math.e ** (x*-1))))
+    return (1 / (1 + np.exp(-x)))
+
 
 def maxIndex(arr):
     ind = 0
@@ -90,3 +112,9 @@ def bias(arr):
     for el in arr:
         temp.append(el)
     return temp
+
+def sig_deriv():
+    
+
+
+    return 4

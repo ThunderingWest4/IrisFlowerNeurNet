@@ -16,7 +16,7 @@ val = []
 
 for i in range(len(irisdat)):
     x = irisdat[i]
-    print(x)
+    "print(x)"
     u = [1]
     for el in x:
         u.append(el)
@@ -29,7 +29,7 @@ for i in range(len(irisdat)):
 
 random.shuffle(val)
 
-print(val)
+"print(val)"
 
 training = val[0:124]
 testing = val[125:]
