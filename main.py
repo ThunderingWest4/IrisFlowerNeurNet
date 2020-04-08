@@ -34,6 +34,6 @@ random.shuffle(val)
 training = val[0:124]
 testing = val[125:]
 
-NN.train(training, 2000)
+NN.train(training, 10000, 0.1)
 
 NN.test(testing)
