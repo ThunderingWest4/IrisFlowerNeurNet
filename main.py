@@ -1,7 +1,12 @@
 from sklearn import datasets
 import network
 import random
+import threading
+import time
+import os
+clear = lambda: os.system('cls') #on Windows System
 
+start_time = time.clock()
 iris = datasets.load_iris()
 irisdat = iris.data
 #print(irisdat)
@@ -31,9 +36,34 @@ random.shuffle(val)
 
 "print(val)"
 
+def loading():
+    while True:
+        print("\\")
+        time.sleep(0.001)
+        clear()
+        print(".")
+        time.sleep(0.001)
+        clear()
+        print("/")
+        time.sleep(0.001)
+        clear()
+
+
 training = val[0:124]
 testing = val[125:]
 
-NN.train(training, 2000, 0.1)
+#thread = threading.Thread(target=loading)
+#thread.start()
+NN.train(training, 100000, 0.2)
+#thread.stop()
 
 NN.test(testing)
+end_time = time.clock()
+from datetime import datetime
+
+now = datetime.now()
+
+current_time = now.strftime("%H:%M:%S")
+print("Time Finished: ", current_time)
+print("Time Elapsed: ", (end_time - start_time))
+

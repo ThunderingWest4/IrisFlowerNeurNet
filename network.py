@@ -28,7 +28,7 @@ class NeuralNetwork():
                     t1 = self.feedForward(inp[0])
                     HLweighted, output = t1[0], t1[1]
                     #print(output, a[1])
-                    self.bProp(inp[0], inp[1], rounder(output), HLweighted, inp[0])
+                    self.bProp(inp[0], inp[1], output, HLweighted, inp[0])
                 
         #backprop is jury-rigged together but HOPEFULLY works        
         
@@ -54,16 +54,19 @@ class NeuralNetwork():
 
     def bProp(self, x, y, out, HLweighted, originp):
         #loss = (desired - actual)^2
+        #RECODE THIS ENTIRE THING
         YArr = [0 for i in range(3)]; YArr[y] = 1
-        HLweightDiff = dot(np.transpose(HLweighted), (2*(np.subtract(YArr, out)) * sig_arr_deriv(out)))
+        error = np.subtract(YArr, out)
+        D_out_layer = error * sig_arr_deriv(out)
 
-        #ILweightDiff = dot(np.transpose(originp), (dot(2*(np.subtract(YArr, out)) * sig_arr_deriv(out), np.transpose(self.HLweights)) * sig_arr_deriv(HLweighted).append(1)))
-        ILweightDiff = dot(np.transpose(x), np.dot((2*(np.subtract(YArr, out)) * sig_arr_deriv(out)), np.transpose(self.HLweights)))
+        HL_error = dot(D_out_layer, np.transpose(self.HLweights))
+        temp = sig_arr_deriv(HLweighted)
+        temp.insert(0, 1)
+        D_HL = mult(HL_error, temp)
 
-        self.ILweights = add(self.ILweights, ILweightDiff*self.alpha)
-        self.HLweights = add(self.HLweights, HLweightDiff*self.alpha)
-
-        #print(HLweightDiff, ILweightDiff)
+        #Now to update weights
+        self.HLweights += self.alpha * dot(np.transpose(HLweighted), D_out_layer)
+        self.ILweights += self.alpha * dot(x, D_HL)
 
     def test(self, testdata):
         print("-----------------------------------------------------------------")
@@ -137,5 +140,10 @@ def add(arr, num):
         ret.append(temp)
     return ret
 
+def mult(arr1, arr2):
+    if(len(arr1) == len(arr2)):
+        return [arr1[i]*arr2[i] for i in range(len(arr1))]
+    else:
+        raise Exception("Inequal shapes {} and {}", len(arr1), len(arr2))
 
     
