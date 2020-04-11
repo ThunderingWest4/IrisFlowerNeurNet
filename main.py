@@ -6,11 +6,10 @@ import time
 import os
 clear = lambda: os.system('cls') #on Windows System
 
-start_time = time.clock()
+start_time = time.process_time()
 iris = datasets.load_iris()
 irisdat = iris.data
 #print(irisdat)
-print(irisdat[0])
 numTypes = 3
 #total of 150 different things in the iris dataset
 #4 attributes
@@ -20,11 +19,8 @@ NN.NeuralNetwork(len(irisdat[0]), 1, 5, numTypes)
 val = []
 
 for i in range(len(irisdat)):
-    x = irisdat[i]
-    "print(x)"
-    u = [1]
-    for el in x:
-        u.append(el)
+
+    u = irisdat[i]
     if(i<=50): 
         val.append([u, 0])
     elif(50 < i and i <= 100):
@@ -54,11 +50,11 @@ testing = val[125:]
 
 #thread = threading.Thread(target=loading)
 #thread.start()
-NN.train(training, 100000, 0.2)
+NN.train(training, 2500, 0.1)
 #thread.stop()
 
 NN.test(testing)
-end_time = time.clock()
+end_time = time.process_time()
 from datetime import datetime
 
 now = datetime.now()
