@@ -50,7 +50,7 @@ testing = val[125:]
 
 #thread = threading.Thread(target=loading)
 #thread.start()
-NN.train(training, 2500, 0.1)
+NN.train(training, 3000, 0.1)
 #thread.stop()
 
 NN.test(testing)

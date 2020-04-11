@@ -67,7 +67,9 @@ class NeuralNetwork():
         HL_error = np.dot(D_out_layer, np.transpose(self.HLweights))
         temp = sig_arr_deriv(HLweighted)
         temp.insert(0, 1)
-        D_HL = [temp[i] * HL_error for i in range(len(temp))]
+        D_HL = [a*HL_error for a in temp]
+        #np.dot(temp, HL_error)
+        #[temp[i] * HL_error for i in range(len(temp))]
 
         #Now to update weights
         self.HLweights += self.alpha * dot(np.transpose(HLweighted), D_out_layer)
