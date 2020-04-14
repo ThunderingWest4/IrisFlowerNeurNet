@@ -95,7 +95,8 @@ class NeuralNetwork():
             tHL.insert(0, self.hiddenBias)
             print(tHL, D_out_layer)
             self.HLweights = np.transpose(self.HLweights) + self.alpha * np.multiply(tHL, D_out_layer)
-            self.ILweights += self.alpha * np.dot(x[0], np.transpose(D_HL))
+            #i think we need not the summed and weighted layer but the full on every weighted value
+            #self.ILweights[1:] += self.alpha * np.dot(x[0], np.transpose(D_HL))
             self.inputBias += np.sum(D_HL) * self.alpha
             self.hiddenBias += np.sum(D_out_layer) * self.alpha
             #print(self.HLweights, self.ILweights)
@@ -142,12 +143,6 @@ def maxIndex(arr):
             ind = i
             prevmax = arr[i]
     return ind
-
-def bias(arr):
-    temp = [1]
-    for el in arr:
-        temp.append(el)
-    return temp
 
 def sig_deriv(x):
     return sigmoid(x)*(np.subtract(1, sigmoid(x)))
