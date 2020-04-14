@@ -23,18 +23,27 @@ class NeuralNetwork():
         self.HLweights = [[random.random() for k in range(3)] for q in range(6)]
         #range(3) because 3 branches off
         for i in range(iters):
+            info = []
             for inepy in data:
-                    wah = [self.inputBias]
-                    for elem in inepy[0].tolist():
-                        wah.append(elem)
-                    inp = [wah, inepy[1]]
-                    t1 = self.feedForward(inp[0])
-                    HLweighted, output = t1[0], t1[1]
-                    #print(output, a[1])
-                    self.bProp(inp[0], inp[1], output, HLweighted, inp[0])
-                
-        #backprop is jury-rigged together but HOPEFULLY works        
-        
+                wah = [self.inputBias]
+                for elem in inepy[0].tolist():
+                    wah.append(elem)
+                tY = [0 for i in range(3)]; tY[inepy[1]] = 1
+                inp = [wah, tY]
+                t1 = self.feedForward(inp[0])
+                HLweighted, output = t1[0], t1[1]
+                info.append([inp, HLweighted, output])
+                #print(output, a[1])
+            #now all examples have been ff'd
+            #info[0] = input of ex, info[1] = HLweighted, info[2] = predicted output
+            errors = (-1/len(info)) * np.sum([np.multiply(info[i][0][1], arrLog(info[i][2].tolist())) + 
+                     np.multiply(np.subtract(1, info[i][0][1]).tolist(), 
+                     arrLog(np.subtract(1, info[i][2]))) for i in range(len(info))])
+
+            self.bProp(errors, info)
+            random.shuffle(data)
+            
+                        
     def feedForward(self, passedIn):
         ret = [0 for i in range(self.outputSize)]
         temp = [0 for i in range(self.hiddenSize)]
@@ -56,27 +65,40 @@ class NeuralNetwork():
 
         return [temp, ret]
 
-    def bProp(self, x, y, out, HLweighted, originp):
-        #loss = (desired - actual)^2
-        #RECODE THIS ENTIRE THING
-        YArr = [0 for i in range(3)]; YArr[y] = 1
-        #error = 0.5 * np.square(np.subtract(YArr, out))
-        error =np.subtract(YArr, out)
-        D_out_layer = error * sig_arr_deriv(out)
+    def bProp(self, yErrs, inform):
 
-        HL_error = np.dot(D_out_layer, np.transpose(self.HLweights))
-        temp = sig_arr_deriv(HLweighted)
-        temp.insert(0, 1)
-        D_HL = [a*HL_error for a in temp]
-        #np.dot(temp, HL_error)
-        #[temp[i] * HL_error for i in range(len(temp))]
+        for i in range(len(inform)): 
+            YArr = inform[i][0][1]
+            HLweighted = inform[i][1]
+            currOutErr = yErrs
+            x = inform[i][0]
+            #error = 0.5 * np.square(np.subtract(YArr, out))
 
-        #Now to update weights
-        self.HLweights += self.alpha * dot(np.transpose(HLweighted), D_out_layer)
-        self.ILweights += self.alpha * dot(x, D_HL)
-        self.inputBias += np.sum(D_HL) * self.alpha
-        self.hiddenBias += np.sum(D_out_layer) * self.alpha
-        #print(self.HLweights, self.ILweights)
+            HL_error = np.dot(currOutErr, np.transpose(self.HLweights))
+            temp = sig_arr_deriv(inform[i][1])
+            temp.insert(0, 1)
+            D_HL = [a*HL_error for a in temp]
+            #np.dot(temp, HL_error)
+            #[temp[i] * HL_error for i in range(len(temp))]
+
+            #Adding two 0's to make dimensions match that of HLweighted
+            #Dout = currOutErr.tolist()
+            #D_out_layer.append(0)
+            #D_out_layer.append(0)            
+            #Now to update weights
+            D_out_layer = currOutErr.tolist()
+            #D_out_layer = [self.hiddenBias]
+            #print(Dout)
+            #for tjing in Dout:
+            #    D_out_layer.append(tjing)
+            tHL = HLweighted.tolist()
+            tHL.insert(0, self.hiddenBias)
+            print(tHL, D_out_layer)
+            self.HLweights = np.transpose(self.HLweights) + self.alpha * np.multiply(tHL, D_out_layer)
+            self.ILweights += self.alpha * np.dot(x[0], np.transpose(D_HL))
+            self.inputBias += np.sum(D_HL) * self.alpha
+            self.hiddenBias += np.sum(D_out_layer) * self.alpha
+            #print(self.HLweights, self.ILweights)
         
 
     def test(self, testdata):
@@ -104,8 +126,13 @@ class NeuralNetwork():
             print(element)        
 
 def sigmoid(x):
-    return (1 / (1 + np.exp(-x)))
+    if(type(x) == int or type(x) == float or type(x) == np.float64):
+        return (1 / (1 + np.exp(-1*x)))
+    else:
+        return(sigList(x))
 
+def sigList(x):
+    return [sigmoid(a) for a in x]
 
 def maxIndex(arr):
     ind = 0
@@ -123,7 +150,7 @@ def bias(arr):
     return temp
 
 def sig_deriv(x):
-    return sigmoid(x)*(1-sigmoid(x))
+    return sigmoid(x)*(np.subtract(1, sigmoid(x)))
 
 def sig_arr_deriv(inarr):
     a = []
@@ -169,3 +196,5 @@ def insertBias(obj, given):
         wah.append(elem)
     return wah
     
+def arrLog(arr):
+    return [math.log(x) for x in arr]
