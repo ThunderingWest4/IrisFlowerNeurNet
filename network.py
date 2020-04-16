@@ -51,7 +51,7 @@ class NeuralNetwork():
             #print(i)
     def backprop(self, HLw, pred, x, y, totalEx):
         print(pred, y)
-        error = (-1/totalEx)*(np.multiply(y, arrLog(pred)) + np.multiply(np.subtract(1, y), arrLog(np.subtract(1, pred))))
+        error = 2*np.subtract(y, pred)
         print(error)
         
         t = [self.hiddenBias]
