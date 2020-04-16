@@ -51,7 +51,7 @@ class NeuralNetwork():
             #print(i)
     def backprop(self, HLw, pred, x, y, totalEx):
         print(pred, y)
-        error = (-1/totalEx)*(np.multiply(y, arrLog(pred)) + np.multiply(np.subtract(1, y), arrLog(np.subtract(1, pred))))
+        error = (1/totalEx)*(np.multiply(y, arrLog(pred)) + np.multiply(np.subtract(1, y), arrLog(np.subtract(1, pred))))
         print(error)
         
         t = [self.hiddenBias]
@@ -59,8 +59,8 @@ class NeuralNetwork():
             t.append(thing)
         HLw = t
 
-        DHL = dot(HLw, np.multiply(error, sig_arr_deriv(pred)))
-        DIL = np.dot(x, (np.dot(np.multiply(error, sig_arr_deriv(pred)), np.transpose(self.HLweights))*sig_arr_deriv(HLw))[1:])
+        DHL = np.multiply(HLw, error)
+        DIL = np.dot(x, (np.dot(error, np.transpose(self.HLweights))*sig_arr_deriv(HLw))[0:5])
         
         self.HLweights += np.multiply(self.alpha, DHL)
         self.ILweights += np.multiply(self.alpha, DIL)
@@ -86,7 +86,7 @@ class NeuralNetwork():
         
         for minty in range(len(ret)):
             ret[minty] = sigmoid(ret[minty])
-        print(passedIn, tx, ret)
+        #print(passedIn, tx, ret)
         return [temp, ret]
         #return [temp, ret]
 
@@ -155,7 +155,7 @@ def sigmoid(x):
     if(type(x) == int or type(x) == float or type(x) == np.float64):
         return (1 / (1 + np.exp(-1*x)))
     else:
-        return(sigList(x))
+        return(sig_arr(x))
 
 def sig_arr(x):
     return [sigmoid(a) for a in x]

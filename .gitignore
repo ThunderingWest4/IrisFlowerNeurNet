@@ -1,3 +1,5 @@
 .dist
 __pycache__
 OnlineSol
+reason.txt
+OnlineSol/online.py
