@@ -37,33 +37,32 @@ class NeuralNetwork():
                 #print(output, a[1])
                 self.backprop(HLweighted, output, inp[0], inp[1], len(data))
             #now all examples have been ff'd
-            #info[0] = input of ex, info[1] = HLweighted, info[2] = predicted output
-            """errors = (-1/len(info)) * np.sum([np.multiply(info[i][0][1], arrLog(info[i][2])) + 
-                     arrMult(
-                     np.subtract(1, info[i][0][1]), 
-                     arrLog(
-                         np.subtract(1, info[i][2])) 
-                     ) for i in range(len(info))])"""
             
-            #errors = (-1/len(info)) * np.sum(np.subtract(info[i][0][1], info[i][2]) for i in range(len(info)))
-            #self.bProp(errors, info)
-            #random.shuffle(data)
-            #print(i)
     def backprop(self, HLw, pred, x, y, totalEx):
-        print(pred, y)
+        #print(pred, y)
         error = 2*np.subtract(y, pred)
-        print(error)
+        #print(error)
         
         t = [self.hiddenBias]
         for thing in HLw:
             t.append(thing)
         HLw = t
 
-        DHL = dot(HLw, np.multiply(error, sig_arr_deriv(pred)))
-        DIL = np.dot(x, (np.dot(np.multiply(error, sig_arr_deriv(pred)), np.transpose(self.HLweights))*sig_arr_deriv(HLw))[1:])
-        
+        ErrSig = np.multiply(error, sig_arr_deriv(pred))
+        #DHL = np.dot(HLw, np.multiply(error, sig_arr_deriv(pred)))
+        #Calculating Deriv of 6, HLw and 3, ErrSig
+        #Needs to be 6, 3 dims to properly change the HLweights
+        DHL = [np.multiply(HLw[i], ErrSig) for i in range(len(HLw))]
+
+        #Calculating DotProd of 5, x (original input) and 6, random maths 
+        #RandMaths = (np.dot(np.multiply(error, sig_arr_deriv(pred)), np.transpose(self.HLweights))*sig_arr_deriv(HLw))
+        DIL = 0
+
         self.HLweights += np.multiply(self.alpha, DHL)
         self.ILweights += np.multiply(self.alpha, DIL)
+        #print(len(self.HLweights), len(self.HLweights[0]))
+        #print(len(DHL), len(DHL[0]))
+        #print(len(self.ILweights), len(self.ILweights[0]))
         #self.hiddenBias += np.sum(DHL)*self.alpha
         #self.inputBias += np.sum(DIL)*self.alpha
 
@@ -86,46 +85,9 @@ class NeuralNetwork():
         
         for minty in range(len(ret)):
             ret[minty] = sigmoid(ret[minty])
-        print(passedIn, tx, ret)
+        #print(passedIn, tx, ret)
         return [temp, ret]
         #return [temp, ret]
-
-    def bProp(self, yErrs, inform):
-
-        for i in range(len(inform)): 
-            YArr = inform[i][0][1]
-            HLweighted = inform[i][1]
-            currOutErr = yErrs
-            x = inform[i][0]
-            #error = 0.5 * np.square(np.subtract(YArr, out))
-
-            HL_error = np.dot(currOutErr, np.transpose(self.HLweights))
-            temp = sig_arr_deriv(inform[i][1])
-            temp.insert(0, self.hiddenBias)
-            D_HL = [a*HL_error for a in temp]
-            #np.dot(temp, HL_error)
-            #[temp[i] * HL_error for i in range(len(temp))]
-
-            #Adding two 0's to make dimensions match that of HLweighted
-            #Dout = currOutErr.tolist()
-            #D_out_layer.append(0)
-            #D_out_layer.append(0)            
-            #Now to update weights
-            D_out_layer = currOutErr.tolist()
-            #D_out_layer = [self.hiddenBias]
-            #print(Dout)
-            #for tjing in Dout:
-            #    D_out_layer.append(tjing)
-            tHL = HLweighted.tolist()
-            tHL.insert(0, self.hiddenBias)
-            print(self.unDottedRet)
-            #self.HLweights += (self.alpha * np.dot(D_out_layer, (self.unDottedRet)))
-            #i think we need not the summed and weighted layer but the full on every weighted value
-            #self.ILweights += self.alpha * np.dot(x[0], np.transpose(self.rawTemp))
-            self.inputBias += np.sum(D_HL) * self.alpha
-            self.hiddenBias += np.sum(D_out_layer) * self.alpha
-            #print(self.HLweights, self.ILweights)
-        
 
     def test(self, testdata):
         print("-----------------------------------------------------------------")
@@ -147,6 +109,13 @@ class NeuralNetwork():
             tests+=1
             DoubleCheck.append([returned[1], expected])
             print("Test Number " + str(tests) + ": The Network was " + str(result))
+            maxAns = ans.tolist().index(max(ans))
+            maxExp = expected.index(max(expected))
+            if(maxAns == maxExp):
+                result = "correct"
+                correct+=1
+            else:
+                result="wrong"
         print("The Network was " + str((correct/total)*100) + "% Correct")
         for element in DoubleCheck:
             print(element)        
@@ -155,7 +124,7 @@ def sigmoid(x):
     if(type(x) == int or type(x) == float or type(x) == np.float64):
         return (1 / (1 + np.exp(-1*x)))
     else:
-        return(sigList(x))
+        return(sig_arr(x))
 
 def sig_arr(x):
     return [sigmoid(a) for a in x]
