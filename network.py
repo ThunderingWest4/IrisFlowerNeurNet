@@ -55,13 +55,16 @@ class NeuralNetwork():
         DHL = [np.multiply(HLw[i], ErrSig) for i in range(len(HLw))]
 
         #Calculating DotProd of 5, x (original input) and 6, random maths 
-        #RandMaths = (np.dot(np.multiply(error, sig_arr_deriv(pred)), np.transpose(self.HLweights))*sig_arr_deriv(HLw))
+        #RandMaths = [np.multiply(np.transpose((np.transpose(self.HLweights))*sig_arr_deriv(HLw))[i], ErrSig) for i in range(len(np.transpose((np.transpose(self.HLweights))*sig_arr_deriv(HLw))))]
+        #for i in range(len(RandMaths)):
+        #    RandMaths[i] = np.sum(RandMaths[i])
+        #DIL = [np.multiply(x[i], RandMaths[1:]) for i in range(len(x))]
         DIL = 0
-
         self.HLweights += np.multiply(self.alpha, DHL)
         self.ILweights += np.multiply(self.alpha, DIL)
         #print(len(self.HLweights), len(self.HLweights[0]))
         #print(len(DHL), len(DHL[0]))
+        #print(len(DIL), len(DIL[0]))
         #print(len(self.ILweights), len(self.ILweights[0]))
         #self.hiddenBias += np.sum(DHL)*self.alpha
         #self.inputBias += np.sum(DIL)*self.alpha
@@ -108,7 +111,6 @@ class NeuralNetwork():
                 result = "wrong"
             tests+=1
             DoubleCheck.append([returned[1], expected])
-            print("Test Number " + str(tests) + ": The Network was " + str(result))
             maxAns = ans.tolist().index(max(ans))
             maxExp = expected.index(max(expected))
             if(maxAns == maxExp):
@@ -116,6 +118,7 @@ class NeuralNetwork():
                 correct+=1
             else:
                 result="wrong"
+            print("Test Number " + str(tests) + ": The Network was " + str(result))
         print("The Network was " + str((correct/total)*100) + "% Correct")
         for element in DoubleCheck:
             print(element)        
