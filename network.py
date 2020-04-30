@@ -44,6 +44,7 @@ class NeuralNetwork():
         error = 2*np.subtract(y, pred)
         #print(error)
         self.totalErr.append(error)
+
         
         t = [self.hiddenBias]
         for thing in HLw:
@@ -62,6 +63,7 @@ class NeuralNetwork():
         #    RandMaths[i] = np.sum(RandMaths[i])
         #DIL = [np.multiply(x[i], RandMaths[1:]) for i in range(len(x))]
         DIL = 0
+
         self.HLweights += np.multiply(self.alpha, DHL)
         self.ILweights += np.multiply(self.alpha, DIL)
         #print(len(self.HLweights), len(self.HLweights[0]))
