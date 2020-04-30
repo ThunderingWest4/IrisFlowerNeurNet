@@ -10,6 +10,7 @@ import network
 import random
 import threading
 import os
+from visualize import visualize as vis
 
 iris = datasets.load_iris()
 irisdat = iris.data
@@ -36,13 +37,14 @@ random.shuffle(val)
 
 training = val[0:99]
 testing = val[100:]
-iters = 75000
+iters = 1000
 NN.train(training, iters, 0.32)
 #print("Previously seen (training) example progress: ")
 #NN.test(training)
 #print("----------------------------------------------")
 print("New and Never Before Seen (testing) example set: ")
 NN.test(testing)
+vis(NN.totalErr)
 end_time = time.process_time()
 
 now = datetime.now()

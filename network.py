@@ -12,6 +12,7 @@ class NeuralNetwork():
         self.outputSize = outputN
         self.inputBias = 1
         self.hiddenBias = 1
+        self.totalErr = []
     
     def train(self, data, iters, learningRate):
         self.alpha = learningRate
@@ -42,6 +43,7 @@ class NeuralNetwork():
         #print(pred, y)
         error = 2*np.subtract(y, pred)
         #print(error)
+        self.totalErr.append(error)
         
         t = [self.hiddenBias]
         for thing in HLw:
