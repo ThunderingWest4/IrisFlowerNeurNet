@@ -38,12 +38,14 @@ alpha = 0.1
 model = keras.Sequential([
 
     keras.layers.Dense(units=5, activation='sigmoid'), 
+    keras.layers.Dense(units=10, activation='sigmoid'),
     keras.layers.Dense(units=3, activation='sigmoid')
 ])
 
-model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.SGD(lr=0.01, momentum=0.9), metrics=['accuracy'])
-print("about to start fitting model")
-history = model.fit(trainX, trainy, validation_data=(testX, testy), epochs=200, verbose=0)
+model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.SGD(lr=0.05, momentum=0.9), metrics=['accuracy'])
+print("----------- about to start fitting model ------------")
+history = model.fit(trainX, trainy, validation_data=(testX, testy), epochs=3000, verbose=0)
 print("--------- about to test predictions ------------")
 test_eval = model.evaluate(testX, testy, verbose=0)
-print("Accuracy: " + str(test_eval))
+print("Accuracy on testing set: " + str(test_eval))
+print("Accuracy on training set: " + str(model.evaluate(trainX, trainy, verbose=0)))
